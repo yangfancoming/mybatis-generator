@@ -34,9 +34,8 @@ import org.mybatis.generator.internal.rules.Rules;
  * Base class for all code generator implementations. This class provides many
  * of the housekeeping methods needed to implement a code generator, with only
  * the actual code generation methods left unimplemented.
- * 
- * @author Jeff Butler
- * 
+ * IntrospectedTable实体类封装了数据库表对应的原始信息
+ *
  */
 public abstract class IntrospectedTable {
 
@@ -371,8 +370,11 @@ public abstract class IntrospectedTable {
     }
 
     public void initialize() {
+        // mapper
         calculateJavaClientAttributes();
+        // dao、example资源位置这里生成
         calculateModelAttributes();
+        // xml
         calculateXmlAttributes();
 
         if (tableConfiguration.getModelType() == ModelType.HIERARCHICAL) {
@@ -382,7 +384,6 @@ public abstract class IntrospectedTable {
         } else {
             rules = new ConditionalModelRules(this);
         }
-
         context.getPlugins().initialized(this);
     }
 
@@ -696,17 +697,17 @@ public abstract class IntrospectedTable {
     }
 
     protected String calculateJavaModelPackage() {
-        JavaModelGeneratorConfiguration config = context
-                .getJavaModelGeneratorConfiguration();
-
+        // 获取Context上下文中已经缓存了javaModelGenerator标签属性信息的JavaModelGeneratorConfiguration解析器
+        JavaModelGeneratorConfiguration config = context.getJavaModelGeneratorConfiguration();
         StringBuilder sb = new StringBuilder();
+        // javaModelGenerator 标签中 targetPackage 属性的值
         sb.append(config.getTargetPackage());
         sb.append(fullyQualifiedTable.getSubPackageForModel(isSubPackagesEnabled(config)));
-
         return sb.toString();
     }
 
     protected void calculateModelAttributes() {
+        // 1、读取的是javaModelGenerator 标签的包路径
         String pakkage = calculateJavaModelPackage();
 
         StringBuilder sb = new StringBuilder();
@@ -715,7 +716,7 @@ public abstract class IntrospectedTable {
         sb.append(fullyQualifiedTable.getDomainObjectName());
         sb.append("Key"); //$NON-NLS-1$
         setPrimaryKeyType(sb.toString());
-
+        // 2、拼装全限定名，会影响生成Hello的位置
         sb.setLength(0);
         sb.append(pakkage);
         sb.append('.');
@@ -735,7 +736,7 @@ public abstract class IntrospectedTable {
         sb.append(fullyQualifiedTable.getDomainObjectName());
         sb.append("WithBLOBs"); //$NON-NLS-1$
         setRecordWithBLOBsType(sb.toString());
-
+        // 2、拼装全限定名，会影响生成HelloExample的位置
         String exampleTargetPackage = calculateJavaModelExamplePackage();
         sb.setLength(0);
         sb.append(exampleTargetPackage);

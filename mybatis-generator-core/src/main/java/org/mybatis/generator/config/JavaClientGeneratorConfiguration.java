@@ -7,6 +7,7 @@ import static org.mybatis.generator.internal.util.messages.Messages.getString;
 import java.util.List;
 
 public class JavaClientGeneratorConfiguration extends TypedPropertyHolder {
+
     private String targetPackage;
     private String targetProject;
 
@@ -36,8 +37,7 @@ public class JavaClientGeneratorConfiguration extends TypedPropertyHolder {
         }
 
         if (!stringHasValue(targetPackage)) {
-            errors.add(getString("ValidationError.12", //$NON-NLS-1$
-                    "javaClientGenerator", contextId)); //$NON-NLS-1$
+            errors.add(getString("ValidationError.12", "javaClientGenerator", contextId)); //$NON-NLS-1$
         }
     }
 }

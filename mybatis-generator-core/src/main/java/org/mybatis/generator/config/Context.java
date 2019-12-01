@@ -338,6 +338,7 @@ public class Context extends PropertyHolder {
      * @throws InterruptedException if the progress callback reports a cancel
      */
     public void introspectTables(ProgressCallback callback,List<String> warnings, Set<String> fullyQualifiedTableNames) throws SQLException, InterruptedException {
+        // 初始化表数组
         introspectedTables = new ArrayList<>();
         JavaTypeResolver javaTypeResolver = ObjectFactory.createJavaTypeResolver(this, warnings);
         Connection connection = null;
@@ -345,12 +346,10 @@ public class Context extends PropertyHolder {
         try {
             callback.startTask(getString("Progress.0")); //$NON-NLS-1$
             connection = getConnection();
-
             DatabaseIntrospector databaseIntrospector = new DatabaseIntrospector(this, connection.getMetaData(), javaTypeResolver, warnings);
-
+            // 获取表信息
             for (TableConfiguration tc : tableConfigurations) {
                 String tableName = composeFullyQualifiedTableName(tc.getCatalog(), tc.getSchema(), tc.getTableName(), '.');
-
                 if (fullyQualifiedTableNames != null  && !fullyQualifiedTableNames.isEmpty() && !fullyQualifiedTableNames.contains(tableName)) {
                     continue;
                 }
@@ -397,10 +396,13 @@ public class Context extends PropertyHolder {
         if (introspectedTables != null) {
             for (IntrospectedTable introspectedTable : introspectedTables) {
                 callback.checkCancel();
-
+                //2、初始化生成规则、包和表名
                 introspectedTable.initialize();
+                // 3、添加解析器参数
                 introspectedTable.calculateGenerators(warnings, callback);
+                // 4、生成Java类 *Example
                 generatedJavaFiles.addAll(introspectedTable.getGeneratedJavaFiles());
+                // 5、生成xml
                 generatedXmlFiles.addAll(introspectedTable.getGeneratedXmlFiles());
                 generatedKotlinFiles.addAll(introspectedTable.getGeneratedKotlinFiles());
                 generatedJavaFiles.addAll(pluginAggregator.contextGenerateAdditionalJavaFiles(introspectedTable));

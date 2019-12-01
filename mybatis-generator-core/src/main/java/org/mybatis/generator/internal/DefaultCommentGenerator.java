@@ -32,10 +32,13 @@ import org.mybatis.generator.internal.util.StringUtility;
 
 public class DefaultCommentGenerator implements CommentGenerator {
 
+    // 配置文件
     private Properties properties;
 
+    // 压制日期注释
     private boolean suppressDate;
 
+    // 压制所有注释
     private boolean suppressAllComments;
 
     /** If suppressAllComments is true, this option is ignored. */
@@ -51,6 +54,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
         addRemarkComments = false;
     }
 
+    // Java文件加注释
     @Override
     public void addJavaFileComment(CompilationUnit compilationUnit) {
         // add no file level comments by default
@@ -59,6 +63,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
     /**
      * Adds a suitable comment to warn users that the element was generated, and when it was generated.
      * @param xmlElement the xml element
+     * Mybatis的Mapper.xml文件里面的注释
      */
     @Override
     public void addComment(XmlElement xmlElement) {
@@ -84,6 +89,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
         xmlElement.addElement(new TextElement("-->")); //$NON-NLS-1$
     }
 
+    // 为根元素的第一个子节点添加注释
     @Override
     public void addRootComment(XmlElement rootElement) {
         // add no document level comments by default
@@ -107,6 +113,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
      * tag then the Java merge capability of the eclipse plugin will break.
      * @param javaElement       the java element
      * @param markAsDoNotDelete the mark as do not delete
+     *  添加自定义javadoc标签
      */
     protected void addJavadocTag(JavaElement javaElement, boolean markAsDoNotDelete) {
         javaElement.addJavaDocLine(" *"); //$NON-NLS-1$
@@ -139,6 +146,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
         }
     }
 
+    // 类注释
     @Override
     public void addClassComment(InnerClass innerClass, IntrospectedTable introspectedTable) {
         if (suppressAllComments) {
@@ -178,6 +186,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
         innerClass.addJavaDocLine(" */"); //$NON-NLS-1$
     }
 
+    // 模型类添加注释
     @Override
     public void addModelClassComment(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         if (suppressAllComments || !addRemarkComments) {
@@ -206,6 +215,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
         topLevelClass.addJavaDocLine(" */"); //$NON-NLS-1$
     }
 
+    // 枚举注释
     @Override
     public void addEnumComment(InnerEnum innerEnum, IntrospectedTable introspectedTable) {
         if (suppressAllComments) {
@@ -226,6 +236,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
         innerEnum.addJavaDocLine(" */"); //$NON-NLS-1$
     }
 
+    // 字段注释
     @Override
     public void addFieldComment(Field field, IntrospectedTable introspectedTable,
             IntrospectedColumn introspectedColumn) {
@@ -279,6 +290,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
         field.addJavaDocLine(" */"); //$NON-NLS-1$
     }
 
+    // 普通方法注释,mapper接口中方法
     @Override
     public void addGeneralMethodComment(Method method, IntrospectedTable introspectedTable) {
         if (suppressAllComments) {
@@ -299,6 +311,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
         method.addJavaDocLine(" */"); //$NON-NLS-1$
     }
 
+    //  Getter方法注释
     @Override
     public void addGetterComment(Method method, IntrospectedTable introspectedTable,
             IntrospectedColumn introspectedColumn) {
@@ -331,6 +344,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
         method.addJavaDocLine(" */"); //$NON-NLS-1$
     }
 
+    // Setter方法注释
     @Override
     public void addSetterComment(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
         if (suppressAllComments) {

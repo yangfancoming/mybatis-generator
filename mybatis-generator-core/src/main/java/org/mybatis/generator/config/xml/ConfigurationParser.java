@@ -84,8 +84,7 @@ public class ConfigurationParser {
         return parseConfiguration(is);
     }
 
-    private Configuration parseConfiguration(InputSource inputSource)
-            throws IOException, XMLParserException {
+    private Configuration parseConfiguration(InputSource inputSource)throws IOException, XMLParserException {
         parseErrors.clear();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(true);
@@ -94,8 +93,9 @@ public class ConfigurationParser {
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             // dcoument 组装器
             DocumentBuilder builder = factory.newDocumentBuilder();
+            //1 设置校验的dtd资源文件
             builder.setEntityResolver(new ParserEntityResolver());
-            // 实例化一个错误处理类，处理的错误和警告信息会以list形式保存
+            // 实例化一个错误处理类，处理的错误和警告信息会以list形式保存  //2 解析配置
             ParserErrorHandler handler = new ParserErrorHandler(warnings,  parseErrors);
             builder.setErrorHandler(handler);
 

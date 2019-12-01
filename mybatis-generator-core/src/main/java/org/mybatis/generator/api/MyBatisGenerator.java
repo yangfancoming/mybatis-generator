@@ -35,8 +35,6 @@ import org.mybatis.generator.internal.XmlFileMergerJaxp;
  * <li>Create a MyBatisGenerator object</li>
  * <li>Call one of the generate() methods</li>
  * </ol>
- *
- * @author Jeff Butler
  * @see org.mybatis.generator.config.xml.ConfigurationParser
  */
 public class MyBatisGenerator {
@@ -102,18 +100,12 @@ public class MyBatisGenerator {
      * method can be canceled through the ProgressCallback interface. This version of the method runs all configured
      * contexts.
      *
-     * @param callback
-     *            an instance of the ProgressCallback interface, or <code>null</code> if you do not require progress
-     *            information
-     * @throws SQLException
-     *             the SQL exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     * @throws InterruptedException
-     *             if the method is canceled through the ProgressCallback
+     * @param callback  an instance of the ProgressCallback interface, or <code>null</code> if you do not require progress  information
+     * @throws SQLException the SQL exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws InterruptedException if the method is canceled through the ProgressCallback
      */
-    public void generate(ProgressCallback callback) throws SQLException,
-            IOException, InterruptedException {
+    public void generate(ProgressCallback callback) throws SQLException,IOException, InterruptedException {
         generate(callback, null, null, true);
     }
 
@@ -185,16 +177,11 @@ public class MyBatisGenerator {
      * @param writeFiles
      *            if true, then the generated files will be written to disk.  If false,
      *            then the generator runs but nothing is written
-     * @throws SQLException
-     *             the SQL exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     * @throws InterruptedException
-     *             if the method is canceled through the ProgressCallback
+     * @throws SQLException the SQL exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws InterruptedException if the method is canceled through the ProgressCallback
      */
-    public void generate(ProgressCallback callback, Set<String> contextIds,
-            Set<String> fullyQualifiedTableNames, boolean writeFiles) throws SQLException,
-            IOException, InterruptedException {
+    public void generate(ProgressCallback callback, Set<String> contextIds,Set<String> fullyQualifiedTableNames, boolean writeFiles) throws SQLException,IOException, InterruptedException {
 
         if (callback == null) {
             callback = new NullProgressCallback();
@@ -230,10 +217,9 @@ public class MyBatisGenerator {
             totalSteps += context.getIntrospectionSteps();
         }
         callback.introspectionStarted(totalSteps);
-
+        //0、 连接数据库，解析表字段
         for (Context context : contextsToRun) {
-            context.introspectTables(callback, warnings,
-                    fullyQualifiedTableNames);
+            context.introspectTables(callback, warnings,fullyQualifiedTableNames);
         }
 
         // now run the generates
@@ -242,141 +228,110 @@ public class MyBatisGenerator {
             totalSteps += context.getGenerationSteps();
         }
         callback.generationStarted(totalSteps);
-
+        //1、生成JAVA和xml对应资源文件
         for (Context context : contextsToRun) {
-            context.generateFiles(callback, generatedJavaFiles,
-                    generatedXmlFiles, generatedKotlinFiles, warnings);
+            context.generateFiles(callback, generatedJavaFiles, generatedXmlFiles, generatedKotlinFiles, warnings);
         }
 
         // now save the files
+        //2、保存文件
         if (writeFiles) {
-            callback.saveStarted(generatedXmlFiles.size()
-                    + generatedJavaFiles.size());
-
+            callback.saveStarted(generatedXmlFiles.size() + generatedJavaFiles.size());
             for (GeneratedXmlFile gxf : generatedXmlFiles) {
                 projects.add(gxf.getTargetProject());
                 writeGeneratedXmlFile(gxf, callback);
             }
-
             for (GeneratedJavaFile gjf : generatedJavaFiles) {
                 projects.add(gjf.getTargetProject());
                 writeGeneratedJavaFile(gjf, callback);
             }
-
             for (GeneratedKotlinFile gkf : generatedKotlinFiles) {
                 projects.add(gkf.getTargetProject());
                 writeGeneratedKotlinFile(gkf, callback);
             }
-
             for (String project : projects) {
                 shellCallback.refreshProject(project);
             }
         }
-
         callback.done();
     }
 
-    private void writeGeneratedJavaFile(GeneratedJavaFile gjf, ProgressCallback callback)
-            throws InterruptedException, IOException {
+    private void writeGeneratedJavaFile(GeneratedJavaFile gjf, ProgressCallback callback)throws InterruptedException, IOException {
         File targetFile;
         String source;
         try {
-            File directory = shellCallback.getDirectory(gjf
-                    .getTargetProject(), gjf.getTargetPackage());
+            File directory = shellCallback.getDirectory(gjf.getTargetProject(), gjf.getTargetPackage());
             targetFile = new File(directory, gjf.getFileName());
             if (targetFile.exists()) {
                 if (shellCallback.isMergeSupported()) {
-                    source = shellCallback.mergeJavaFile(gjf
-                            .getFormattedContent(), targetFile,
-                            MergeConstants.getOldElementTags(),
-                            gjf.getFileEncoding());
+                    source = shellCallback.mergeJavaFile(gjf.getFormattedContent(), targetFile, MergeConstants.getOldElementTags(),gjf.getFileEncoding());
                 } else if (shellCallback.isOverwriteEnabled()) {
                     source = gjf.getFormattedContent();
-                    warnings.add(getString("Warning.11", //$NON-NLS-1$
-                            targetFile.getAbsolutePath()));
+                    warnings.add(getString("Warning.11", targetFile.getAbsolutePath()));
                 } else {
                     source = gjf.getFormattedContent();
-                    targetFile = getUniqueFileName(directory, gjf
-                            .getFileName());
-                    warnings.add(getString(
-                            "Warning.2", targetFile.getAbsolutePath())); //$NON-NLS-1$
+                    targetFile = getUniqueFileName(directory, gjf.getFileName());
+                    warnings.add(getString("Warning.2", targetFile.getAbsolutePath())); //$NON-NLS-1$
                 }
             } else {
                 source = gjf.getFormattedContent();
             }
-
             callback.checkCancel();
-            callback.startTask(getString(
-                    "Progress.15", targetFile.getName())); //$NON-NLS-1$
+            callback.startTask(getString("Progress.15", targetFile.getName())); //$NON-NLS-1$
             writeFile(targetFile, source, gjf.getFileEncoding());
         } catch (ShellException e) {
             warnings.add(e.getMessage());
         }
     }
 
-    private void writeGeneratedKotlinFile(GeneratedKotlinFile gkf, ProgressCallback callback)
-            throws InterruptedException, IOException {
+    private void writeGeneratedKotlinFile(GeneratedKotlinFile gkf, ProgressCallback callback) throws InterruptedException, IOException {
         File targetFile;
         String source;
         try {
-            File directory = shellCallback.getDirectory(gkf
-                    .getTargetProject(), gkf.getTargetPackage());
+            File directory = shellCallback.getDirectory(gkf.getTargetProject(), gkf.getTargetPackage());
             targetFile = new File(directory, gkf.getFileName());
             if (targetFile.exists()) {
                 if (shellCallback.isOverwriteEnabled()) {
                     source = gkf.getFormattedContent();
-                    warnings.add(getString("Warning.11", //$NON-NLS-1$
-                            targetFile.getAbsolutePath()));
+                    warnings.add(getString("Warning.11", targetFile.getAbsolutePath()));
                 } else {
                     source = gkf.getFormattedContent();
-                    targetFile = getUniqueFileName(directory, gkf
-                            .getFileName());
-                    warnings.add(getString(
-                            "Warning.2", targetFile.getAbsolutePath())); //$NON-NLS-1$
+                    targetFile = getUniqueFileName(directory, gkf.getFileName());
+                    warnings.add(getString("Warning.2", targetFile.getAbsolutePath())); //$NON-NLS-1$
                 }
             } else {
                 source = gkf.getFormattedContent();
             }
-
             callback.checkCancel();
-            callback.startTask(getString(
-                    "Progress.15", targetFile.getName())); //$NON-NLS-1$
+            callback.startTask(getString("Progress.15", targetFile.getName())); //$NON-NLS-1$
             writeFile(targetFile, source, gkf.getFileEncoding());
         } catch (ShellException e) {
             warnings.add(e.getMessage());
         }
     }
 
-    private void writeGeneratedXmlFile(GeneratedXmlFile gxf, ProgressCallback callback)
-            throws InterruptedException, IOException {
+    private void writeGeneratedXmlFile(GeneratedXmlFile gxf, ProgressCallback callback) throws InterruptedException, IOException {
         File targetFile;
         String source;
         try {
-            File directory = shellCallback.getDirectory(gxf
-                    .getTargetProject(), gxf.getTargetPackage());
+            File directory = shellCallback.getDirectory(gxf.getTargetProject(), gxf.getTargetPackage());
             targetFile = new File(directory, gxf.getFileName());
             if (targetFile.exists()) {
                 if (gxf.isMergeable()) {
-                    source = XmlFileMergerJaxp.getMergedSource(gxf,
-                            targetFile);
+                    source = XmlFileMergerJaxp.getMergedSource(gxf,targetFile);
                 } else if (shellCallback.isOverwriteEnabled()) {
                     source = gxf.getFormattedContent();
-                    warnings.add(getString("Warning.11", //$NON-NLS-1$
-                            targetFile.getAbsolutePath()));
+                    warnings.add(getString("Warning.11",targetFile.getAbsolutePath()));
                 } else {
                     source = gxf.getFormattedContent();
-                    targetFile = getUniqueFileName(directory, gxf
-                            .getFileName());
-                    warnings.add(getString(
-                            "Warning.2", targetFile.getAbsolutePath())); //$NON-NLS-1$
+                    targetFile = getUniqueFileName(directory, gxf.getFileName());
+                    warnings.add(getString("Warning.2", targetFile.getAbsolutePath())); //$NON-NLS-1$
                 }
             } else {
                 source = gxf.getFormattedContent();
             }
-
             callback.checkCancel();
-            callback.startTask(getString(
-                    "Progress.15", targetFile.getName())); //$NON-NLS-1$
+            callback.startTask(getString("Progress.15", targetFile.getName())); //$NON-NLS-1$
             writeFile(targetFile, source, "UTF-8"); //$NON-NLS-1$
         } catch (ShellException e) {
             warnings.add(e.getMessage());
@@ -385,15 +340,10 @@ public class MyBatisGenerator {
 
     /**
      * Writes, or overwrites, the contents of the specified file.
-     *
-     * @param file
-     *            the file
-     * @param content
-     *            the content
-     * @param fileEncoding
-     *            the file encoding
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     * @param file the file
+     * @param content the content
+     * @param fileEncoding the file encoding
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private void writeFile(File file, String content, String fileEncoding) throws IOException {
         FileOutputStream fos = new FileOutputStream(file, false);
@@ -411,16 +361,12 @@ public class MyBatisGenerator {
 
     /**
      * Gets the unique file name.
-     *
-     * @param directory
-     *            the directory
-     * @param fileName
-     *            the file name
+     * @param directory the directory
+     * @param fileName  the file name
      * @return the unique file name
      */
     private File getUniqueFileName(File directory, String fileName) {
         File answer = null;
-
         // try up to 1000 times to generate a unique file name
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i < 1000; i++) {
@@ -435,12 +381,9 @@ public class MyBatisGenerator {
                 break;
             }
         }
-
         if (answer == null) {
-            throw new RuntimeException(getString(
-                    "RuntimeError.3", directory.getAbsolutePath())); //$NON-NLS-1$
+            throw new RuntimeException(getString("RuntimeError.3", directory.getAbsolutePath())); //$NON-NLS-1$
         }
-
         return answer;
     }
 
@@ -448,7 +391,6 @@ public class MyBatisGenerator {
      * Returns the list of generated Java files after a call to one of the generate methods.
      * This is useful if you prefer to process the generated files yourself and do not want
      * the generator to write them to disk.
-     *  
      * @return the list of generated Java files
      */
     public List<GeneratedJavaFile> getGeneratedJavaFiles() {
@@ -459,7 +401,6 @@ public class MyBatisGenerator {
      * Returns the list of generated Kotlin files after a call to one of the generate methods.
      * This is useful if you prefer to process the generated files yourself and do not want
      * the generator to write them to disk.
-     *  
      * @return the list of generated Kotlin files
      */
     public List<GeneratedKotlinFile> getGeneratedKotlinFiles() {
@@ -470,7 +411,6 @@ public class MyBatisGenerator {
      * Returns the list of generated XML files after a call to one of the generate methods.
      * This is useful if you prefer to process the generated files yourself and do not want
      * the generator to write them to disk.
-     *  
      * @return the list of generated XML files
      */
     public List<GeneratedXmlFile> getGeneratedXmlFiles() {

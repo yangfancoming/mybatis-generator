@@ -20,9 +20,7 @@ import org.mybatis.generator.config.Context;
  * 
  * <p>This adapter does not implement the <code>validate</code> method - all plugins
  * must perform validation.
- * 
- * @author Jeff Butler
- * 
+ *
  */
 public abstract class PluginAdapter implements Plugin {
     protected Context context;
@@ -266,8 +264,7 @@ public abstract class PluginAdapter implements Plugin {
     }
 
     @Override
-    public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass,
-            IntrospectedTable introspectedTable) {
+    public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass,IntrospectedTable introspectedTable) {
         return true;
     }
 

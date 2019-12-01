@@ -4,6 +4,9 @@ package org.mybatis.generator.api.dom.java;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * MyBatis将java中类、方法、接口、枚举、内部类、内部类枚举抽象成JavaElement对象，而Field则是针对类中属性的封装
+*/
 public abstract class JavaElement {
 
     private List<String> javaDocLines = new ArrayList<>();

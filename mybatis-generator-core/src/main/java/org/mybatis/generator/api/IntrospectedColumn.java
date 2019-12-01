@@ -10,10 +10,10 @@ import org.mybatis.generator.internal.util.StringUtility;
 
 /**
  * This class holds information about an introspected column.
- * 
- * @author Jeff Butler
+ * IntrospectedColumn 则是封装了表中字段的原始信息
  */
 public class IntrospectedColumn {
+
     protected String actualColumnName;
 
     protected int jdbcType;

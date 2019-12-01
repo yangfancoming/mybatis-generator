@@ -3,6 +3,9 @@ package org.mybatis.generator.api.dom.java;
 
 import java.util.Optional;
 
+/**
+ * 是针对类中属性的封装
+*/
 public class Field extends JavaElement {
     private FullyQualifiedJavaType type;
     private String name;

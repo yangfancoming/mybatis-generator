@@ -148,32 +148,24 @@ public class DatabaseIntrospector {
 
     /**
      * Returns a List of IntrospectedTable elements that matches the specified table configuration.
-     *
-     * @param tc
-     *            the table configuration
+     * @param tc  the table configuration
      * @return a list of introspected tables
-     * @throws SQLException
-     *             if any errors in introspection
+     * @throws SQLException if any errors in introspection
      */
-    public List<IntrospectedTable> introspectTables(TableConfiguration tc)
-            throws SQLException {
-
+    public List<IntrospectedTable> introspectTables(TableConfiguration tc) throws SQLException {
         // get the raw columns from the DB
         Map<ActualTableName, List<IntrospectedColumn>> columns = getColumns(tc);
 
         if (columns.isEmpty()) {
-            warnings.add(getString("Warning.19", tc.getCatalog(), //$NON-NLS-1$
-                    tc.getSchema(), tc.getTableName()));
+            warnings.add(getString("Warning.19", tc.getCatalog(), tc.getSchema(), tc.getTableName()));
             return Collections.emptyList();
         }
-
         removeIgnoredColumns(tc, columns);
         calculateExtraColumnInformation(tc, columns);
         applyColumnOverrides(tc, columns);
         calculateIdentityColumns(tc, columns);
 
-        List<IntrospectedTable> introspectedTables = calculateIntrospectedTables(
-                tc, columns);
+        List<IntrospectedTable> introspectedTables = calculateIntrospectedTables( tc, columns);
 
         // now introspectedTables has all the columns from all the
         // tables in the configuration. Do some validation...
@@ -185,27 +177,23 @@ public class DatabaseIntrospector {
             if (!introspectedTable.hasAnyColumns()) {
                 // add warning that the table has no columns, remove from the
                 // list
-                String warning = getString(
-                                "Warning.1", introspectedTable.getFullyQualifiedTable().toString()); //$NON-NLS-1$
+                String warning = getString("Warning.1", introspectedTable.getFullyQualifiedTable().toString()); //$NON-NLS-1$
                 warnings.add(warning);
                 iter.remove();
-            } else if (!introspectedTable.hasPrimaryKeyColumns()
-                    && !introspectedTable.hasBaseColumns()) {
+            } else if (!introspectedTable.hasPrimaryKeyColumns()  && !introspectedTable.hasBaseColumns()) {
                 // add warning that the table has only BLOB columns, remove from
                 // the list
-                String warning = getString(
-                                "Warning.18", introspectedTable.getFullyQualifiedTable().toString()); //$NON-NLS-1$
+                String warning = getString("Warning.18", introspectedTable.getFullyQualifiedTable().toString()); //$NON-NLS-1$
                 warnings.add(warning);
                 iter.remove();
             } else {
                 // now make sure that all columns called out in the
                 // configuration
                 // actually exist
-                reportIntrospectionWarnings(introspectedTable, tc,
-                        introspectedTable.getFullyQualifiedTable());
+                reportIntrospectionWarnings(introspectedTable, tc,introspectedTable.getFullyQualifiedTable());
+
             }
         }
-
         return introspectedTables;
     }
 

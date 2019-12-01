@@ -557,10 +557,10 @@ public class MyBatisGeneratorConfigurationParser {
     }
 
     protected void parseJavaModelGenerator(Context context, Node node) {
+        //1 自定义解析器
         JavaModelGeneratorConfiguration javaModelGeneratorConfiguration = new JavaModelGeneratorConfiguration();
-
-        context
-                .setJavaModelGeneratorConfiguration(javaModelGeneratorConfiguration);
+        // 2 将解析器放入上下文
+        context.setJavaModelGeneratorConfiguration(javaModelGeneratorConfiguration);
 
         Properties attributes = parseAttributes(node);
         String targetPackage = attributes.getProperty("targetPackage"); //$NON-NLS-1$
