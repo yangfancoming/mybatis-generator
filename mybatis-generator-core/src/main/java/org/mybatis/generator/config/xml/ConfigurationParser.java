@@ -39,33 +39,21 @@ public class ConfigurationParser {
     }
 
     /**
-     * This constructor accepts a properties object which may be used to specify
-     * an additional property set.  Typically this property set will be Ant or Maven properties
-     * specified in the build.xml file or the POM.
-     * 
-     * <p>If there are name collisions between the different property sets, they will be 
-     * resolved in this order:
-     * 
+     * This constructor accepts a properties object which may be used to specify an additional property set.
+     * Typically this property set will be Ant or Maven properties specified in the build.xml file or the POM.
+     * <p>If there are name collisions between the different property sets, they will be  resolved in this order:
      * <ol>
      *   <li>System properties take highest precedence</li>
-     *   <li>Properties specified in the &lt;properties&gt; configuration
-     *       element are next</li>
-     *   <li>Properties specified in this "extra" property set are
-     *       lowest precedence.</li>
+     *   <li>Properties specified in the &lt;properties&gt; configuration element are next</li>
+     *   <li>Properties specified in this "extra" property set are lowest precedence.</li>
      * </ol>
-     * 
-     * @param extraProperties an (optional) set of properties used to resolve property
-     *     references in the configuration file
+     * @param extraProperties an (optional) set of properties used to resolve property references in the configuration file
      * @param warnings any warnings are added to this array
      */
     public ConfigurationParser(Properties extraProperties, List<String> warnings) {
         super();
         this.extraProperties = extraProperties;
-        if (warnings == null) {
-            this.warnings = new ArrayList<>();
-        } else {
-            this.warnings = warnings;
-        }
+        this.warnings =(warnings == null) ?  new ArrayList<>() : warnings;
         parseErrors = new ArrayList<>();
     }
 
@@ -98,7 +86,6 @@ public class ConfigurationParser {
             // 实例化一个错误处理类，处理的错误和警告信息会以list形式保存  //2 解析配置
             ParserErrorHandler handler = new ParserErrorHandler(warnings,  parseErrors);
             builder.setErrorHandler(handler);
-
             // 使用w3c 文档解析
             Document document = null;
             try {
@@ -129,13 +116,11 @@ public class ConfigurationParser {
                 // 该DTD运行此分支，也就是mybatis处理分支
                 config = parseMyBatisGeneratorConfiguration(rootNode);
             } else {
-                throw new XMLParserException(getString("RuntimeError.5")); //$NON-NLS-1$
+                throw new XMLParserException(getString("RuntimeError.5")); //$NON-NLS-1$   This is not a MyBatis Generator Configuration File
             }
-
             if (!parseErrors.isEmpty()) {
                 throw new XMLParserException(parseErrors);
             }
-
             return config;
         } catch (ParserConfigurationException e) {
             parseErrors.add(e.getMessage());
@@ -143,10 +128,8 @@ public class ConfigurationParser {
         }
     }
 
-    private Configuration parseMyBatisGeneratorConfiguration(Element rootNode)
-            throws XMLParserException {
-        MyBatisGeneratorConfigurationParser parser = new MyBatisGeneratorConfigurationParser(
-                extraProperties);
+    private Configuration parseMyBatisGeneratorConfiguration(Element rootNode)  throws XMLParserException {
+        MyBatisGeneratorConfigurationParser parser = new MyBatisGeneratorConfigurationParser(extraProperties);
         return parser.parseConfiguration(rootNode);
     }
 }

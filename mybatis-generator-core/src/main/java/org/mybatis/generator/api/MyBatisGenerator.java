@@ -28,7 +28,6 @@ import org.mybatis.generator.internal.XmlFileMergerJaxp;
 
 /**
  * This class is the main interface to MyBatis generator. A typical execution of the tool involves these steps:
- * 
  * <ol>
  * <li>Create a Configuration object. The Configuration can be the result of a parsing the XML configuration file, or it
  * can be created solely in Java.</li>
@@ -55,13 +54,10 @@ public class MyBatisGenerator {
 
     /**
      * Constructs a MyBatisGenerator object.
-     * 
-     * @param configuration
-     *            The configuration for this invocation
+     * @param configuration The configuration for this invocation
      * @param shellCallback
      *            an instance of a ShellCallback interface. You may specify
-     *            <code>null</code> in which case the DefaultShellCallback will
-     *            be used.
+     *            <code>null</code> in which case the DefaultShellCallback will  be used.
      * @param warnings
      *            Any warnings generated during execution will be added to this
      *            list. Warnings do not affect the running of the tool, but they
@@ -69,8 +65,7 @@ public class MyBatisGenerator {
      *            data type. In that case, the column will be ignored and
      *            generation will continue. You may specify <code>null</code> if
      *            you do not want warnings returned.
-     * @throws InvalidConfigurationException
-     *             if the specified configuration is invalid
+     * @throws InvalidConfigurationException if the specified configuration is invalid
      */
     public MyBatisGenerator(Configuration configuration, ShellCallback shellCallback,  List<String> warnings) throws InvalidConfigurationException {
         super();
@@ -91,7 +86,6 @@ public class MyBatisGenerator {
         } else {
             this.warnings = warnings;
         }
-
         this.configuration.validate();
     }
 
@@ -182,11 +176,9 @@ public class MyBatisGenerator {
      * @throws InterruptedException if the method is canceled through the ProgressCallback
      */
     public void generate(ProgressCallback callback, Set<String> contextIds,Set<String> fullyQualifiedTableNames, boolean writeFiles) throws SQLException,IOException, InterruptedException {
-
         if (callback == null) {
             callback = new NullProgressCallback();
         }
-
         generatedJavaFiles.clear();
         generatedXmlFiles.clear();
         ObjectFactory.reset();
@@ -353,7 +345,6 @@ public class MyBatisGenerator {
         } else {
             osw = new OutputStreamWriter(fos, fileEncoding);
         }
-
         try (BufferedWriter bw = new BufferedWriter(osw)) {
             bw.write(content);
         }

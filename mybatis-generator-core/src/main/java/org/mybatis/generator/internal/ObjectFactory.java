@@ -37,8 +37,6 @@ import org.mybatis.generator.runtime.kotlin.IntrospectedTableKotlinImpl;
 
 /**
  * This class creates the different objects needed by the generator.
- *
- * @author Jeff Butler
  */
 public class ObjectFactory {
 
@@ -68,14 +66,10 @@ public class ObjectFactory {
 
     /**
      * Adds a custom classloader to the collection of classloaders searched for "external" classes. These are classes
-     * that do not depend on any of the generator's classes or interfaces. Examples are JDBC drivers, root classes, root
-     * interfaces, etc.
-     *
-     * @param classLoader
-     *            the class loader
+     * that do not depend on any of the generator's classes or interfaces. Examples are JDBC drivers, root classes, root interfaces, etc.
+     * @param classLoader  the class loader
      */
-    public static synchronized void addExternalClassLoader(
-            ClassLoader classLoader) {
+    public static synchronized void addExternalClassLoader( ClassLoader classLoader) {
         ObjectFactory.externalClassLoaders.add(classLoader);
     }
 
@@ -83,18 +77,12 @@ public class ObjectFactory {
      * Returns a class loaded from the context classloader, or the classloader supplied by a client. This is
      * appropriate for JDBC drivers, model root classes, etc. It is not appropriate for any class that extends one of
      * the supplied classes or interfaces.
-     *
-     * @param type
-     *            the type
+     * @param type  the type
      * @return the Class loaded from the external classloader
-     * @throws ClassNotFoundException
-     *             the class not found exception
+     * @throws ClassNotFoundException  the class not found exception
      */
-    public static Class<?> externalClassForName(String type)
-            throws ClassNotFoundException {
-
+    public static Class<?> externalClassForName(String type) throws ClassNotFoundException {
         Class<?> clazz;
-
         for (ClassLoader classLoader : externalClassLoaders) {
             try {
                 clazz = Class.forName(type, true, classLoader);
@@ -103,84 +91,64 @@ public class ObjectFactory {
                 // ignore - fail safe below
             }
         }
-
         return internalClassForName(type);
     }
 
     public static Object createExternalObject(String type) {
         Object answer;
-
         try {
             Class<?> clazz = externalClassForName(type);
             answer = clazz.getConstructor().newInstance();
         } catch (Exception e) {
-            throw new RuntimeException(getString(
-                    "RuntimeError.6", type), e); //$NON-NLS-1$
+            throw new RuntimeException(getString("RuntimeError.6", type), e); //$NON-NLS-1$
         }
-
         return answer;
     }
 
-    public static Class<?> internalClassForName(String type)
-            throws ClassNotFoundException {
+    public static Class<?> internalClassForName(String type) throws ClassNotFoundException {
         Class<?> clazz = null;
-
         try {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             clazz = Class.forName(type, true, cl);
         } catch (Exception e) {
             // ignore - failsafe below
         }
-
         if (clazz == null) {
             clazz = Class.forName(type, true, ObjectFactory.class.getClassLoader());
         }
-
         return clazz;
     }
 
     public static URL getResource(String resource) {
         URL url;
-
         for (ClassLoader classLoader : externalClassLoaders) {
             url = classLoader.getResource(resource);
             if (url != null) {
                 return url;
             }
         }
-
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         url = cl.getResource(resource);
-
         if (url == null) {
             url = ObjectFactory.class.getClassLoader().getResource(resource);
         }
-
         return url;
     }
 
     public static Object createInternalObject(String type) {
         Object answer;
-
         try {
             Class<?> clazz = internalClassForName(type);
-
             answer = clazz.getConstructor().newInstance();
         } catch (Exception e) {
-            throw new RuntimeException(getString(
-                    "RuntimeError.6", type), e); //$NON-NLS-1$
-
+            throw new RuntimeException(getString("RuntimeError.6", type), e); //$NON-NLS-1$
         }
-
         return answer;
     }
 
-    public static JavaTypeResolver createJavaTypeResolver(Context context,
-            List<String> warnings) {
-        JavaTypeResolverConfiguration config = context
-                .getJavaTypeResolverConfiguration();
+    public static JavaTypeResolver createJavaTypeResolver(Context context, List<String> warnings) {
+        JavaTypeResolverConfiguration config = context.getJavaTypeResolverConfiguration();
         String type;
-
         if (config != null && config.getConfigurationType() != null) {
             type = config.getConfigurationType();
             if ("DEFAULT".equalsIgnoreCase(type)) { //$NON-NLS-1$
@@ -196,62 +164,46 @@ public class ObjectFactory {
         if (config != null) {
             answer.addConfigurationProperties(config.getProperties());
         }
-
         answer.setContext(context);
-
         return answer;
     }
 
-    public static Plugin createPlugin(Context context,
-            PluginConfiguration pluginConfiguration) {
-        Plugin plugin = (Plugin) createInternalObject(pluginConfiguration
-                .getConfigurationType());
+    public static Plugin createPlugin(Context context, PluginConfiguration pluginConfiguration) {
+        Plugin plugin = (Plugin) createInternalObject(pluginConfiguration.getConfigurationType());
         plugin.setContext(context);
         plugin.setProperties(pluginConfiguration.getProperties());
         return plugin;
     }
 
     public static CommentGenerator createCommentGenerator(Context context) {
-
-        CommentGeneratorConfiguration config = context
-                .getCommentGeneratorConfiguration();
+        CommentGeneratorConfiguration config = context.getCommentGeneratorConfiguration();
         CommentGenerator answer;
-
         String type;
         if (config == null || config.getConfigurationType() == null) {
             type = DefaultCommentGenerator.class.getName();
         } else {
             type = config.getConfigurationType();
         }
-
         answer = (CommentGenerator) createInternalObject(type);
-
         if (config != null) {
             answer.addConfigurationProperties(config.getProperties());
         }
-
         return answer;
     }
 
     public static ConnectionFactory createConnectionFactory(Context context) {
-
-        ConnectionFactoryConfiguration config = context
-                .getConnectionFactoryConfiguration();
+        ConnectionFactoryConfiguration config = context.getConnectionFactoryConfiguration();
         ConnectionFactory answer;
-
         String type;
         if (config == null || config.getConfigurationType() == null) {
             type = JDBCConnectionFactory.class.getName();
         } else {
             type = config.getConfigurationType();
         }
-
         answer = (ConnectionFactory) createInternalObject(type);
-
         if (config != null) {
             answer.addConfigurationProperties(config.getProperties());
         }
-
         return answer;
     }
 
@@ -260,11 +212,8 @@ public class ObjectFactory {
         if (!stringHasValue(type)) {
             type = DefaultJavaFormatter.class.getName();
         }
-
         JavaFormatter answer = (JavaFormatter) createInternalObject(type);
-
         answer.setContext(context);
-
         return answer;
     }
 
@@ -273,11 +222,8 @@ public class ObjectFactory {
         if (!stringHasValue(type)) {
             type = DefaultKotlinFormatter.class.getName();
         }
-
         KotlinFormatter answer = (KotlinFormatter) createInternalObject(type);
-
         answer.setContext(context);
-
         return answer;
     }
 
@@ -286,31 +232,21 @@ public class ObjectFactory {
         if (!stringHasValue(type)) {
             type = DefaultXmlFormatter.class.getName();
         }
-
         XmlFormatter answer = (XmlFormatter) createInternalObject(type);
-
         answer.setContext(context);
-
         return answer;
     }
 
-    public static IntrospectedTable createIntrospectedTable(
-            TableConfiguration tableConfiguration, FullyQualifiedTable table,
-            Context context) {
-
+    public static IntrospectedTable createIntrospectedTable(TableConfiguration tableConfiguration, FullyQualifiedTable table, Context context) {
         IntrospectedTable answer = createIntrospectedTableForValidation(context);
         answer.setFullyQualifiedTable(table);
         answer.setTableConfiguration(tableConfiguration);
-
         return answer;
     }
 
     /**
      * Creates an introspected table implementation that is only usable for validation .
-     * 
-     *
-     * @param context
-     *            the context
+     * @param context the context
      * @return the introspected table
      */
     public static IntrospectedTable createIntrospectedTableForValidation(Context context) {
@@ -330,10 +266,8 @@ public class ObjectFactory {
         } else if ("MyBatis3Kotlin".equalsIgnoreCase(type)) { //$NON-NLS-1$
             type = IntrospectedTableKotlinImpl.class.getName();
         }
-
         IntrospectedTable answer = (IntrospectedTable) createInternalObject(type);
         answer.setContext(context);
-
         return answer;
     }
 
@@ -342,10 +276,8 @@ public class ObjectFactory {
         if (!stringHasValue(type)) {
             type = IntrospectedColumn.class.getName();
         }
-
         IntrospectedColumn answer = (IntrospectedColumn) createInternalObject(type);
         answer.setContext(context);
-
         return answer;
     }
 }
