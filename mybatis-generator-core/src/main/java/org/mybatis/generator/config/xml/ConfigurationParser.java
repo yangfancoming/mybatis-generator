@@ -74,19 +74,13 @@ public class ConfigurationParser {
         return parseConfiguration(fr);
     }
 
-    public Configuration parseConfiguration(Reader reader) throws IOException,
-            XMLParserException {
-
+    public Configuration parseConfiguration(Reader reader) throws IOException,XMLParserException {
         InputSource is = new InputSource(reader);
-
         return parseConfiguration(is);
     }
 
-    public Configuration parseConfiguration(InputStream inputStream)
-            throws IOException, XMLParserException {
-
+    public Configuration parseConfiguration(InputStream inputStream) throws IOException, XMLParserException {
         InputSource is = new InputSource(inputStream);
-
         return parseConfiguration(is);
     }
 

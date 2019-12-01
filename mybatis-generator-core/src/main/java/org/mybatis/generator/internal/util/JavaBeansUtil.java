@@ -303,10 +303,8 @@ public class JavaBeansUtil {
         return method;
     }
     
-    private static void addGeneratedSetterJavaDoc(Method method, IntrospectedColumn introspectedColumn, Context context,
-            IntrospectedTable introspectedTable) {
-        context.getCommentGenerator().addSetterComment(method,
-                introspectedTable, introspectedColumn);
+    private static void addGeneratedSetterJavaDoc(Method method, IntrospectedColumn introspectedColumn, Context context,IntrospectedTable introspectedTable) {
+        context.getCommentGenerator().addSetterComment(method,introspectedTable, introspectedColumn);
     }
 
     private static void addGeneratedSetterAnnotation(Method method, IntrospectedColumn introspectedColumn,

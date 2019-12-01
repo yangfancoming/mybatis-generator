@@ -19,6 +19,7 @@ import org.mybatis.generator.api.dom.xml.XmlElement;
 
 /**
  * Implementations of this interface are used to generate comments for the various artifacts.
+ * 此接口的实现用于为各种 构件 生成注释。
  */
 public interface CommentGenerator {
 
@@ -65,8 +66,8 @@ public interface CommentGenerator {
      * @param introspectedTable
      *            the introspected table
      */
-    void addModelClassComment(TopLevelClass topLevelClass,
-            IntrospectedTable introspectedTable);
+    void addModelClassComment(TopLevelClass topLevelClass,IntrospectedTable introspectedTable);
+
 
     /**
      * Adds a comment for a model class.
@@ -76,8 +77,7 @@ public interface CommentGenerator {
      * @param introspectedTable
      *            the introspected table
      */
-    default void addModelClassComment(KotlinType modelClass,
-            IntrospectedTable introspectedTable) {}
+    default void addModelClassComment(KotlinType modelClass,IntrospectedTable introspectedTable) {}
 
     /**
      * Adds the inner class comment.
@@ -87,8 +87,7 @@ public interface CommentGenerator {
      * @param introspectedTable
      *            the introspected table
      */
-    void addClassComment(InnerClass innerClass,
-            IntrospectedTable introspectedTable);
+    void addClassComment(InnerClass innerClass, IntrospectedTable introspectedTable);
 
     /**
      * Adds the inner class comment.
@@ -100,47 +99,31 @@ public interface CommentGenerator {
      * @param markAsDoNotDelete
      *            the mark as do not delete
      */
-    void addClassComment(InnerClass innerClass,
-            IntrospectedTable introspectedTable, boolean markAsDoNotDelete);
+    void addClassComment(InnerClass innerClass,IntrospectedTable introspectedTable, boolean markAsDoNotDelete);
 
     /**
      * Adds the enum comment.
-     *
-     * @param innerEnum
-     *            the inner enum
-     * @param introspectedTable
-     *            the introspected table
+     * @param innerEnum the inner enum
+     * @param introspectedTable the introspected table
      */
-    void addEnumComment(InnerEnum innerEnum,
-            IntrospectedTable introspectedTable);
+    void addEnumComment(InnerEnum innerEnum,IntrospectedTable introspectedTable);
+
 
     /**
      * Adds the getter comment.
-     *
-     * @param method
-     *            the method
-     * @param introspectedTable
-     *            the introspected table
-     * @param introspectedColumn
-     *            the introspected column
+     * @param method the method
+     * @param introspectedTable the introspected table
+     * @param introspectedColumn the introspected column
      */
-    void addGetterComment(Method method,
-            IntrospectedTable introspectedTable,
-            IntrospectedColumn introspectedColumn);
+    void addGetterComment(Method method, IntrospectedTable introspectedTable,IntrospectedColumn introspectedColumn);
 
     /**
      * Adds the setter comment.
-     *
-     * @param method
-     *            the method
-     * @param introspectedTable
-     *            the introspected table
-     * @param introspectedColumn
-     *            the introspected column
+     * @param method  the method
+     * @param introspectedTable the introspected table
+     * @param introspectedColumn the introspected column
      */
-    void addSetterComment(Method method,
-            IntrospectedTable introspectedTable,
-            IntrospectedColumn introspectedColumn);
+    void addSetterComment(Method method,IntrospectedTable introspectedTable,IntrospectedColumn introspectedColumn);
 
     /**
      * Adds the general method comment.

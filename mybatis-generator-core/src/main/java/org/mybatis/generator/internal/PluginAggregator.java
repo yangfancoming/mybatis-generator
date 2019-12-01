@@ -13,11 +13,8 @@ import org.mybatis.generator.config.Context;
  * implements the rule that if any plugin returns "false" from a method, then no
  * subsequent plugin is called.
  * 
- * <p>This class does not follow the normal plugin lifecycle and should not be
- * subclassed by clients.
- * 
- * @author Jeff Butler
- * 
+ * <p>This class does not follow the normal plugin lifecycle and should not be subclassed by clients.
+ *
  */
 public final class PluginAggregator extends CompositePlugin {
 
