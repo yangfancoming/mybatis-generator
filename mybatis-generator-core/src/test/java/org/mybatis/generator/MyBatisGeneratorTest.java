@@ -29,7 +29,8 @@ public class MyBatisGeneratorTest {
     public void tes111t() throws IOException, XMLParserException, InvalidConfigurationException, SQLException, InterruptedException {
         List<String> warnings = new ArrayList<>();
 //        File configFile = new File("scripts/goatConfig.xml");
-        File configFile = new File(getClass().getClassLoader().getResource("scripts/goatConfig.xml").getFile());
+//        File configFile = new File(getClass().getClassLoader().getResource("scripts/goatConfig.xml").getFile());
+        File configFile = new File(getClass().getClassLoader().getResource("scripts/goatCommentGeneratorConfig.xml").getFile());
         ConfigurationParser cp = new ConfigurationParser(warnings);
         Configuration config = cp.parseConfiguration(configFile);
         DefaultShellCallback callback = new DefaultShellCallback(true);
