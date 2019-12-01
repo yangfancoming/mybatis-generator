@@ -203,8 +203,7 @@ public class MyBatisGeneratorMojo extends AbstractMojo {
         }
 
         try {
-            ConfigurationParser cp = new ConfigurationParser(
-                    project.getProperties(), warnings);
+            ConfigurationParser cp = new ConfigurationParser( project.getProperties(), warnings);
             Configuration config = cp.parseConfiguration(configurationFile);
 
             ShellCallback callback = new MavenShellCallback(this, overwrite);

@@ -42,8 +42,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * This class parses configuration files into the new Configuration API.
- * 
- * @author Jeff Butler
+ * 功能： 主要实现子节点解析工作，同时把所有的元数据加载到内存，供后续解析使用
  */
 public class MyBatisGeneratorConfigurationParser {
     private Properties extraProperties;
@@ -75,8 +74,10 @@ public class MyBatisGeneratorConfigurationParser {
             if ("properties".equals(childNode.getNodeName())) { //$NON-NLS-1$
                 parseProperties(childNode);
             } else if ("classPathEntry".equals(childNode.getNodeName())) { //$NON-NLS-1$
+                // 转换类路径节点，转换的元素赋值给配置对象
                 parseClassPathEntry(configuration, childNode);
             } else if ("context".equals(childNode.getNodeName())) { //$NON-NLS-1$
+                // 转换上下文节点，转换的元素赋值给配置对象
                 parseContext(configuration, childNode);
             }
         }
@@ -84,47 +85,38 @@ public class MyBatisGeneratorConfigurationParser {
         return configuration;
     }
 
-    protected void parseProperties(Node node)
-            throws XMLParserException {
+    protected void parseProperties(Node node) throws XMLParserException {
+        // 获取context的所有属性以及值
         Properties attributes = parseAttributes(node);
         String resource = attributes.getProperty("resource"); //$NON-NLS-1$
         String url = attributes.getProperty("url"); //$NON-NLS-1$
 
-        if (!stringHasValue(resource)
-                && !stringHasValue(url)) {
+        if (!stringHasValue(resource)  && !stringHasValue(url)) {
             throw new XMLParserException(getString("RuntimeError.14")); //$NON-NLS-1$
         }
 
-        if (stringHasValue(resource)
-                && stringHasValue(url)) {
+        if (stringHasValue(resource)  && stringHasValue(url)) {
             throw new XMLParserException(getString("RuntimeError.14")); //$NON-NLS-1$
         }
 
         URL resourceUrl;
-
         try {
             if (stringHasValue(resource)) {
                 resourceUrl = ObjectFactory.getResource(resource);
                 if (resourceUrl == null) {
-                    throw new XMLParserException(getString(
-                            "RuntimeError.15", resource)); //$NON-NLS-1$
+                    throw new XMLParserException(getString("RuntimeError.15", resource)); //$NON-NLS-1$
                 }
             } else {
                 resourceUrl = new URL(url);
             }
-
-            InputStream inputStream = resourceUrl.openConnection()
-                    .getInputStream();
-
+            InputStream inputStream = resourceUrl.openConnection().getInputStream();
             configurationProperties.load(inputStream);
             inputStream.close();
         } catch (IOException e) {
             if (stringHasValue(resource)) {
-                throw new XMLParserException(getString(
-                        "RuntimeError.16", resource)); //$NON-NLS-1$
+                throw new XMLParserException(getString("RuntimeError.16", resource)); //$NON-NLS-1$
             } else {
-                throw new XMLParserException(getString(
-                        "RuntimeError.17", url)); //$NON-NLS-1$
+                throw new XMLParserException(getString("RuntimeError.17", url)); //$NON-NLS-1$
             }
         }
     }
@@ -138,9 +130,8 @@ public class MyBatisGeneratorConfigurationParser {
                 .getProperty("introspectedColumnImpl"); //$NON-NLS-1$
         String id = attributes.getProperty("id"); //$NON-NLS-1$
 
-        ModelType mt = defaultModelType == null ? null : ModelType
-                .getModelType(defaultModelType);
-
+        ModelType mt = defaultModelType == null ? null : ModelType .getModelType(defaultModelType);
+        // 实例化一个上下文，并将模型类型传入构造方法，如果为null则是适用condition
         Context context = new Context(mt);
         context.setId(id);
         if (stringHasValue(introspectedColumnImpl)) {
@@ -149,9 +140,9 @@ public class MyBatisGeneratorConfigurationParser {
         if (stringHasValue(targetRuntime)) {
             context.setTargetRuntime(targetRuntime);
         }
-
+        // 将上下文放到配置对象中
         configuration.addContext(context);
-
+        // 获取上下问的子节点，遍历转换
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node childNode = nodeList.item(i);

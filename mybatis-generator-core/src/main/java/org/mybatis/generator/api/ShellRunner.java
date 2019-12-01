@@ -27,16 +27,30 @@ import org.mybatis.generator.logging.LogFactory;
  * @author Jeff Butler
  */
 public class ShellRunner {
+    /**
+     * -config：配置文件，也是我们自动代码对应的xml文件，从后面的执行逻辑可以看出，这个文件是必须有的。
+     * 它包含了jdbc的类路径驱动包、jdbc相关连接参数信息、接口相关参数信息、领域对象相关参数信息以及要生成代码的表信息等等。
+    */
     private static final String CONFIG_FILE = "-configfile"; //$NON-NLS-1$
+
+    /**
+     * -overwrite：默认下载时带此参数，表示如果之前已经生成过代码，但是还是要用新的进行覆盖；可以忽略此参数。
+    */
     private static final String OVERWRITE = "-overwrite"; //$NON-NLS-1$
+    /* -contextids：上下文表示，用逗号分隔；可以忽略。 */
     private static final String CONTEXT_IDS = "-contextids"; //$NON-NLS-1$
+    /* -table：从命令行传入生成的表，用逗号分隔；可以忽略 */
     private static final String TABLES = "-tables"; //$NON-NLS-1$
+    /* -verbose：控制台是否输出详细过程日志；可忽略。 */
     private static final String VERBOSE = "-verbose"; //$NON-NLS-1$
+    /* -forceJavaLogging：强制java日志；可忽略。 */
     private static final String FORCE_JAVA_LOGGING = "-forceJavaLogging"; //$NON-NLS-1$
+    /* -？：显示帮助信息，将忽略其他信息，不执行代码生成。 */
     private static final String HELP_1 = "-?"; //$NON-NLS-1$
     private static final String HELP_2 = "-h"; //$NON-NLS-1$
 
     public static void main(String[] args) {
+        // 至少要有一个参数。。。执行的层面需要配置文件
         if (args.length == 0) {
             usage();
             System.exit(0);
@@ -44,13 +58,13 @@ public class ShellRunner {
         }
 
         Map<String, String> arguments = parseCommandLine(args);
-
+        // 仅仅是帮助信息，有该参数时不生成代码，仅仅显示各个命令行参数的作用
         if (arguments.containsKey(HELP_1)) {
             usage();
             System.exit(0);
             return; // only to satisfy compiler, never returns
         }
-
+        // 必须要有配置文件
         if (!arguments.containsKey(CONFIG_FILE)) {
             writeLine(getString("RuntimeError.0")); //$NON-NLS-1$
             return;
@@ -64,7 +78,7 @@ public class ShellRunner {
             writeLine(getString("RuntimeError.1", configfile)); //$NON-NLS-1$
             return;
         }
-
+        // table参数，以,分割，从命令读取要生成代码的表
         Set<String> fullyqualifiedTables = new HashSet<>();
         if (arguments.containsKey(TABLES)) {
             StringTokenizer st = new StringTokenizer(arguments.get(TABLES), ","); //$NON-NLS-1$
@@ -75,7 +89,7 @@ public class ShellRunner {
                 }
             }
         }
-
+        // contextids参数，以,分割，从命令行读取上下数据
         Set<String> contexts = new HashSet<>();
         if (arguments.containsKey(CONTEXT_IDS)) {
             StringTokenizer st = new StringTokenizer(
@@ -90,16 +104,16 @@ public class ShellRunner {
 
         try {
             ConfigurationParser cp = new ConfigurationParser(warnings);
+            // 将xml配置文件读入到配置对象中
             Configuration config = cp.parseConfiguration(configurationFile);
-
-            DefaultShellCallback shellCallback = new DefaultShellCallback(
-                    arguments.containsKey(OVERWRITE));
-
+            // 缺省的shell回调对象
+            DefaultShellCallback shellCallback = new DefaultShellCallback( arguments.containsKey(OVERWRITE));
+            // 实例化生成对象
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);
+            // 实例化处理过程回调函数，如verbose参数未提供，则不为null
+            ProgressCallback progressCallback = arguments.containsKey(VERBOSE) ? new VerboseProgressCallback() : null;
 
-            ProgressCallback progressCallback = arguments.containsKey(VERBOSE) ? new VerboseProgressCallback()
-                    : null;
-
+            // 生成文件
             myBatisGenerator.generate(progressCallback, contexts, fullyqualifiedTables);
 
         } catch (XMLParserException e) {
@@ -156,8 +170,7 @@ public class ShellRunner {
                 if ((i + 1) < args.length) {
                     arguments.put(CONFIG_FILE, args[i + 1]);
                 } else {
-                    errors.add(getString(
-                            "RuntimeError.19", CONFIG_FILE)); //$NON-NLS-1$
+                    errors.add(getString("RuntimeError.19", CONFIG_FILE)); //$NON-NLS-1$
                 }
                 i++;
             } else if (OVERWRITE.equalsIgnoreCase(args[i])) {
