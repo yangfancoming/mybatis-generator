@@ -18,21 +18,14 @@ import org.mybatis.generator.api.dom.kotlin.KotlinType;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 
 /**
- * Implementations of this interface are used to generate comments for the
- * various artifacts.
- * 
- * @author Jeff Butler
+ * Implementations of this interface are used to generate comments for the various artifacts.
  */
 public interface CommentGenerator {
 
     /**
-     * Adds properties for this instance from any properties configured in the
-     * CommentGenerator configuration.
-     * 
+     * Adds properties for this instance from any properties configured in the CommentGenerator configuration.
      * <p>This method will be called before any of the other methods.
-     * 
-     * @param properties
-     *            All properties from the configuration
+     * @param properties  All properties from the configuration
      */
     void addConfigurationProperties(Properties properties);
 
@@ -43,24 +36,17 @@ public interface CommentGenerator {
      * <p><b>Important:</b> This method should add a the nonstandard JavaDoc tag "@mbg.generated" to
      * the comment. Without this tag, the Eclipse based Java merge feature will fail.
      *
-     * @param field
-     *            the field
-     * @param introspectedTable
-     *            the introspected table
-     * @param introspectedColumn
-     *            the introspected column
+     * @param field the field
+     * @param introspectedTable the introspected table
+     * @param introspectedColumn the introspected column
      */
-    void addFieldComment(Field field,
-            IntrospectedTable introspectedTable,
-            IntrospectedColumn introspectedColumn);
+    void addFieldComment(Field field,IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn);
+
 
     /**
      * Adds the field comment.
-     *
-     * @param field
-     *            the field
-     * @param introspectedTable
-     *            the introspected table
+     * @param field  the field
+     * @param introspectedTable the introspected table
      */
     void addFieldComment(Field field, IntrospectedTable introspectedTable);
 

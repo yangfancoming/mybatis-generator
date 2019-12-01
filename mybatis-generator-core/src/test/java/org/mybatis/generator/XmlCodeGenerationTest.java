@@ -29,8 +29,7 @@ public class XmlCodeGenerationTest {
     @ParameterizedTest
     @MethodSource("generateXmlFiles")
     public void testXmlParse(GeneratedXmlFile generatedXmlFile) {
-        ByteArrayInputStream is = new ByteArrayInputStream(
-                generatedXmlFile.getFormattedContent().getBytes());
+        ByteArrayInputStream is = new ByteArrayInputStream(generatedXmlFile.getFormattedContent().getBytes());
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setValidating(true);
@@ -51,16 +50,15 @@ public class XmlCodeGenerationTest {
 
     private static List<GeneratedXmlFile> generateXmlFilesMybatis() throws Exception {
         JavaCodeGenerationTest.createDatabase();
-        return generateXmlFiles("/scripts/generatorConfig.xml");
+//        return generateXmlFiles("/scripts/generatorConfig.xml");
+        return generateXmlFiles("/scripts/goatConfig.xml");
     }
 
     private static List<GeneratedXmlFile> generateXmlFiles(String configFile) throws Exception {
         List<String> warnings = new ArrayList<>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
         Configuration config = cp.parseConfiguration(JavaCodeGenerationTest.class.getResourceAsStream(configFile));
-
         DefaultShellCallback shellCallback = new DefaultShellCallback(true);
-
         MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);
         myBatisGenerator.generate(null, null, null, false);
         return myBatisGenerator.getGeneratedXmlFiles();

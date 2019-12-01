@@ -862,7 +862,6 @@ public abstract class CompositePlugin implements Plugin {
                 return false;
             }
         }
-        
         return true;
     }
 
@@ -873,7 +872,6 @@ public abstract class CompositePlugin implements Plugin {
                 return false;
             }
         }
-        
         return true;
     }
 
